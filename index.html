@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Estilos/estilosindex.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playwrite+AU+QLD:wght@100..400&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+
+
+<body>
+    <header>
+        <div class="imagen-contenedor">
+            <img id="imagenZoom" src="Imagenes/carros.jpg" alt="Imagen 1">
+            <h1 class="titulo-sobre-imagen">AUTOMOVILES S.A.S</h1>
+            <p class="titulo-debajo-imagen">Tu Mejor Aliado</p>
+        </div>
+        
+    </header>
+
+    <main>
+
+        <h2  > Conoce Nuestros Formularios</h2>
+
+        <div class="botones-contenedor">
+
+        <div> <a href="Formularios/formularioReVehi.html"><button> REGISTRO DE VEHICULO </button></a></div>
+        <div> <a href="Formularios/formularioReCliente.html"><button> REGISTRO DE CLIENTE </button></a></div>
+        <div> <a href="Formularios/formularioReArreglo.html"><button> REGISTRO DE ARREGLO </button></a></div>
+        <div> <a href="Formularios/formularioQuejas.html"><button> QUEJAS Y SUGERENCIAS </button></a></div>
+        <div> <a href="Formularios/formularioReTurno.html"><button> ASIGNACION DE TURNOS </button></a></div>
+        <div> <a href="Formularios/formularioContac.html"><button> FORMULARIO CONTACTAME </button></a></div>
+
+        </div>
+       
+    </main>
+    
+    <footer>
+        <p> &copy; 2025 My Website</p>
+    </footer>
+
+    <script>
+        // Al hacer scroll, cambia el tamaño de la imagen
+        window.addEventListener('scroll', function() {
+            const img = document.getElementById('imagenZoom');
+            // Calcula el valor de escala según el scroll (entre 1 y 1.5)
+            let scale = 1 + window.scrollY / 400;
+            if (scale > 1.5) scale = 1.5;
+            if (scale < 1) scale = 1;
+            img.style.transform = `scale(${scale})`;
+        });
+    </script>
+</body>
+
+
+
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Estilos/estilosFormVehi.css">
+    <title>Registro de Vehículo</title>
+</head>
+<body>
+    <h1>Registro Reparacion</h1>
+    <form id="formArreglo">
+        <input type="hidden" id="indexEdit" value="">
+
+        <label>Ingrese los datos de la reparacion:</label><br><br>
+
+        <label>Descripcion de la Repacion:</label>
+        <input type="text" id="descripcion" required><br><br>
+
+        <label>Cantidad de Repuestos utilizados:</label>
+        <input type="number" id="repuestos" required><br><br>
+
+        <label>Valor estimado:</label>
+        <input type="number" id="valor" required><br><br>
+
+        <label>Tiempo Estimado (Horas) :</label>
+        <input type="number" id="tiempo" required><br><br>
+
+        <label>Nombre del Mecanico:</label>
+        <input type="text" id="mecanico" required><br><br>
+
+        <button type="submit">Guardar Datos</button>
+    </form>
+
+    <h2>Informacion Registrada</h2>
+    <table id="tablaArreglo">
+        <thead>
+            <tr>
+                <th>Descripcion</th>
+                <th>Repuestos</th>
+                <th>Valor</th>
+                <th>Tiempo</th>
+                <th>Mecanico</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // creo el evento cuando se presione el boton registrar 
+        document.getElementById("formArreglo").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            // obtengo los valores de los campos del formulario
+            const descripcion = document.getElementById("descripcion").value;
+            const repuestos = document.getElementById("repuestos").value;
+            const valor = document.getElementById("valor").value;
+            const tiempo = document.getElementById("tiempo").value;
+            const mecanico = document.getElementById("mecanico").value;
+            const indexEdit = document.getElementById("indexEdit").value;
+    
+            // creo un arreglo para almacenar los arreglos
+            // si no hay arreglos en localStorage, inicializo un arreglo vacío
+            let arreglos = JSON.parse(localStorage.getItem("arreglos")) || [];
+    
+            // creo un objeto para el nuevo vehículo
+            // si indexEdit está vacío, significa que es un nuevo registro
+            const nuevoArreglo = { descripcion, repuestos, valor, tiempo, mecanico };
+    
+            // si indexEdit no está vacío, significa que estamos editando un registro existente
+            // en ese caso, actualizo el vehículo en el arreglo
+            if (indexEdit === "") {
+                arreglos.push(nuevoArreglo);
+            } else {
+                arreglos[indexEdit] = nuevoArreglo;
+                document.getElementById("indexEdit").value = "";
+            }
+    
+            // guardo el arreglo actualizado en localStorage y muestro los vehículos
+            // en la tabla
+            localStorage.setItem("arreglos", JSON.stringify(arreglos));
+            mostrarArreglos();
+    
+            // reseteo el formulario para limpiar los campos
+            document.getElementById("formArreglo").reset();
+        });
+         
+        // creo la función para mostrar los vehículos en la tabla
+        // esta función se llama al cargar la página y cada vez que se guarda un vehículo
+        function mostrarArreglos() {
+    
+            // obtengo el tbody de la tabla y lo limpio
+            // luego obtengo los vehículos del localStorage
+            const tbody = document.querySelector("#tablaArreglo tbody");
+            tbody.innerHTML = "";
+            const arreglos = JSON.parse(localStorage.getItem("arreglos")) || [];
+    
+            // recorro el arreglo de vehículos y creo una fila por cada vehículo
+            // agrego los datos del vehículo a la fila y botones para editar y eliminar
+            arreglos.forEach((arreglo, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${arreglo.descripcion}</td>
+                    <td>${arreglo.repuestos}</td>
+                    <td>${arreglo.valor}</td>
+                    <td>${arreglo.tiempo}</td>
+                    <td>${arreglo.mecanico}</td>
+                    <td>
+                        <button onclick="editarArreglo(${index})">Editar</button>
+                        <button onclick="eliminarArreglo(${index})">Eliminar</button>
+                    </td>
+                `;
+    
+                tbody.appendChild(row);
+            });
+        }
+    
+        // creo las funciones para editar y eliminar vehículos
+        // la función editarVehiculo carga los datos del vehículo en el formulario
+    
+        function editarArreglo(index) {
+            const arreglo = JSON.parse(localStorage.getItem("arreglos"))[index];
+            document.getElementById("descripcion").value = arreglo.descripcion;
+            document.getElementById("repuestos").value = arreglo.repuestos;
+            document.getElementById("valor").value = arreglo.valor;
+            document.getElementById("tiempo").value = arreglo.tiempo;
+            document.getElementById("mecanico").value = arreglo.mecanico;
+            document.getElementById("indexEdit").value = index;
+        }
+    
+        // la función eliminarVehiculo elimina el vehículo del arreglo y actualiza la tabla
+        // luego actualiza el localStorage
+        function eliminarArreglo(index) {
+            let arreglos = JSON.parse(localStorage.getItem("arreglos"));
+            arreglos.splice(index, 1);
+            localStorage.setItem("arreglos", JSON.stringify(arreglos));
+            mostrarArreglos();
+        }
+        
+        // llamo a la función mostrarVehiculos al cargar la página
+        // para que se muestren los vehículos registrados
+        window.onload = mostrarArreglos;
+    </script>
+    
+</body>
+</html>

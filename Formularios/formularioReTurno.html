@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignación de Turnos</title>
+    <link rel="stylesheet" href="../Estilos/estilosFormVehi.css">
+</head>
+<body>
+    <h1>Formulario de Asignación de Turnos</h1>
+    <form id="formTurno">
+        <input type="hidden" id="indexTurnoEdit" value="">
+
+        <!-- calendario de atención -->
+        <label>Fecha de la atención:</label>
+        <input type="date" id="fecha" required><br><br>
+
+        <label>Hora estimada:</label>
+        <input type="time" id="hora" required><br><br>
+
+        <!-- prioridad de la atención -->
+        <label>Nivel de Prioridad:</label>
+        <select id="prioridad" required>
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+        </select><br><br>
+
+        <!-- estado de la cita -->
+        <label>Estado de la cita:</label>
+        <select id="estado" required>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Confirmada">Confirmada</option>
+            <option value="Cancelada">Cancelada</option>
+        </select><br><br>
+
+        <label>Nombre del Propietario:</label>
+        <input type="text" id="propietario" required><br><br>
+
+        <button type="submit">Guardar Turno</button>
+    </form>
+
+    <h2>Turnos Asignados</h2>
+    <table id="tablaTurno">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Propietario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // creo el evento cuando se presione el boton guardar turno
+        document.getElementById("formTurno").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // obtengo los valores del formulario
+            const fecha = document.getElementById("fecha").value;
+            const hora = document.getElementById("hora").value;
+            const prioridad = document.getElementById("prioridad").value;
+            const estado = document.getElementById("estado").value;
+            const propietario = document.getElementById("propietario").value;
+            const indexTurnoEdit = document.getElementById("indexTurnoEdit").value;
+
+            // obtengo los turnos del localStorage
+            let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+
+            const nuevoTurno = { fecha, hora, prioridad, estado, propietario };
+
+            // si es un nuevo turno o una edición
+            if (indexTurnoEdit === "") {
+                turnos.push(nuevoTurno);
+            } else {
+                turnos[indexTurnoEdit] = nuevoTurno;
+                document.getElementById("indexTurnoEdit").value = "";
+            }
+
+            localStorage.setItem("turnos", JSON.stringify(turnos));
+            mostrarTurnos();
+            document.getElementById("formTurno").reset();
+        });
+
+        // función para mostrar los turnos en la tabla
+        function mostrarTurnos() {
+            const tbody = document.querySelector("#tablaTurno tbody");
+            tbody.innerHTML = "";
+            const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+
+            turnos.forEach((turno, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${turno.fecha}</td>
+                    <td>${turno.hora}</td>
+                    <td>${turno.prioridad}</td>
+                    <td>${turno.estado}</td>
+                    <td>${turno.propietario}</td>
+                    <td>
+                        <button onclick="editarTurno(${index})">Editar</button>
+                        <button onclick="eliminarTurno(${index})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // función para editar turno
+        function editarTurno(index) {
+            const turno = JSON.parse(localStorage.getItem("turnos"))[index];
+            document.getElementById("fecha").value = turno.fecha;
+            document.getElementById("hora").value = turno.hora;
+            document.getElementById("prioridad").value = turno.prioridad;
+            document.getElementById("estado").value = turno.estado;
+            document.getElementById("propietario").value = turno.propietario;
+            document.getElementById("indexTurnoEdit").value = index;
+        }
+
+        // función para eliminar turno
+        function eliminarTurno(index) {
+            let turnos = JSON.parse(localStorage.getItem("turnos"));
+            turnos.splice(index, 1);
+            localStorage.setItem("turnos", JSON.stringify(turnos));
+            mostrarTurnos();
+        }
+
+        // se llama al cargar la página para mostrar turnos existentes
+        window.onload = mostrarTurnos;
+    </script>
+</body>
+</html>

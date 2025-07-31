@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Estilos/estiloFormQueja.css">
+    <title>Registro Quejas</title>
+</head>
+<body>
+    <h1>Registro De Quejas O Sugerencias</h1>
+    <form id="formQuejas">
+         
+        <!--campo vacio para almacenar de manera temporal el id a editar -->
+
+        <input type="hidden" id="indexEdit" value="">
+
+        <label>INGRESE SUS QUEJAS Y SUGERENCIAS</label><br><br>
+        
+        <label>Asunto:</label>
+        <input type="text" id="asunto" required><br><br>
+
+        <label>Fecha del Acontecimiento:</label>
+        <input type="date" id="fecha" required><br><br>
+
+        <label>Descripcion del Suceso: </label>
+        <input type="text" id="descripcion" required><br><br>
+
+        <label>Sugerencia Ante El Suceso:</label>
+        <input type="text" id="sugerencia" required><br><br>
+
+        <button type="submit">Registrar</button>
+    </form>
+
+    <h2> Registros </h2>
+    <table id="tablaQuejas">
+        <thead>
+            <tr>
+                <th>Asunto</th>
+                <th>Fecha Del Acontecimiento</th>
+                <th>Descripcion De La Situacion</th>
+                <th>Sugerencia Ante El Suceso</th>
+                <th>Acciones</th>
+        
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        document.getElementById("formQuejas").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const asunto = document.getElementById("asunto").value;
+            const fecha = document.getElementById("fecha").value;
+            const descripcion = document.getElementById("descripcion").value;
+            const sugerencia = document.getElementById("sugerencia").value;
+            const indexEdit = document.getElementById("indexEdit").value;
+
+    
+
+            let quejas = JSON.parse(localStorage.getItem("quejas")) || [];
+
+            const nuevaQueja = { asunto, fecha, descripcion, sugerencia };
+
+
+            if (indexEdit === "") {
+                quejas.push(nuevaQueja);
+            } else {
+                quejas[indexEdit] = nuevaQueja;
+                document.getElementById("indexEdit").value = "";
+            }
+
+            localStorage.setItem("quejas", JSON.stringify(quejas));
+            mostrarQuejas();
+            document.getElementById("formQuejas").reset();
+        });
+
+        function mostrarQuejas() {
+            const tbody = document.querySelector("#tablaQuejas tbody");
+            tbody.innerHTML = "";
+            const quejas = JSON.parse(localStorage.getItem("quejas")) || [];
+
+            quejas.forEach((queja, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${queja.asunto}</td>
+                    <td>${queja.fecha}</td>
+                    <td>${queja.descripcion}</td>
+                    <td>${queja.sugerencia}</td>
+            
+                    <td>
+                        <button onclick="editarQueja(${index})">Editar</button>
+                        <button onclick="eliminarQueja(${index})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editarQueja(index) {
+            const queja = JSON.parse(localStorage.getItem("quejas"))[index];
+            document.getElementById("asunto").value = queja.asunto;
+            document.getElementById("fecha").value = queja.fecha;
+            document.getElementById("descripcion").value = queja.descripcion;
+            document.getElementById("sugerencia").value = queja.sugerencia;
+            document.getElementById("indexEdit").value = index;
+
+        }
+
+        function eliminarQueja(index) {
+            let quejas = JSON.parse(localStorage.getItem("quejas"));
+            quejas.splice(index, 1);
+            localStorage.setItem("quejas", JSON.stringify(quejas));
+            mostrarQuejas();
+        }
+
+        window.onload = mostrarQuejas;
+    </script>
+</body>
+</html>

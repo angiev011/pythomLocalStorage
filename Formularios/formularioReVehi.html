@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Estilos/estilosFormVehi.css">
+    <title>Registro de Vehículo</title>
+</head>
+<body>
+    <h1>Registro de Vehículo</h1>
+    <form id="formVehiculo">
+
+        <!-- Campo oculto para almacenar el índice del vehículo a editar -->
+        <input type="hidden" id="indexEdit" value="">
+
+        <label >INGRESE LOS DATOS DEL VEHICULO</label><br><br>
+
+        <label>Placa:</label>
+        <input type="text" id="placa" required><br><br>
+
+        <label>Modelo:</label>
+        <input type="number" id="modelo" required><br><br>
+
+        <label>Año:</label>
+        <input type="number" id="ano" required><br><br>
+
+        <label>Estado del automóvil:</label>
+        <input type="text" id="estado" required><br><br>
+
+        <label>Fecha de ingreso:</label>
+        <input type="date" id="fecha" required><br><br>
+
+        <button type="submit">Registrar Vehículo</button>
+    </form>
+
+    <h2>Vehículos Registrados</h2>
+    <table id="tablaVehiculos">
+        <thead>
+            <tr>
+                <th>Placa</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+                
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // creo el evento cuando se presione el boton registrar 
+        document.getElementById("formVehiculo").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // obtengo los valores de los campos del formulario
+            const placa = document.getElementById("placa").value;
+            const modelo = document.getElementById("modelo").value;
+            const ano = document.getElementById("ano").value;
+            const estado = document.getElementById("estado").value;
+            const fecha = document.getElementById("fecha").value;
+            const indexEdit = document.getElementById("indexEdit").value;
+
+            // creo un arreglo para almacenar los vehiculos
+            // si no hay vehiculos en localStorage, inicializo un arreglo vacío
+            let vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
+
+
+            // creo un objeto para el nuevo vehículo
+            // si indexEdit está vacío, significa que es un nuevo registro
+            const nuevoVehiculo = { placa, modelo, ano, estado, fecha };
+
+            // si indexEdit no está vacío, significa que estamos editando un registro existente
+            // en ese caso, actualizo el vehículo en el arreglo
+            if (indexEdit === "") {
+                vehiculos.push(nuevoVehiculo);
+            } else {
+                vehiculos[indexEdit] = nuevoVehiculo;
+                document.getElementById("indexEdit").value = "";
+            }
+            // guardo el arreglo actualizado en localStorage y muestro los vehículos
+            // en la tabla
+            localStorage.setItem("vehiculos", JSON.stringify(vehiculos));
+            mostrarVehiculos();
+            // reseteo el formulario para limpiar los campos
+            document.getElementById("formVehiculo").reset();
+        });
+         
+        // creo la función para mostrar los vehículos en la tabla
+        // esta función se llama al cargar la página y cada vez que se guarda un vehículo
+        function mostrarVehiculos() {
+
+            // obtengo el tbody de la tabla y lo limpio
+            // luego obtengo los vehículos del localStorage
+            const tbody = document.querySelector("#tablaVehiculos tbody");
+            tbody.innerHTML = "";
+            const vehiculos = JSON.parse(localStorage.getItem("vehiculos")) || [];
+
+            // recorro el arreglo de vehículos y creo una fila por cada vehículo
+            // agrego los datos del vehículo a la fila y botones para editar y eliminar
+            vehiculos.forEach((vehiculo, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${vehiculo.placa}</td>
+                    <td>${vehiculo.modelo}</td>
+                    <td>${vehiculo.ano}</td>
+                    <td>${vehiculo.estado}</td>
+                    <td>${vehiculo.fecha}</td>
+                    <td>
+                        <button onclick="editarVehiculo(${index})">Editar</button>
+                        <button onclick="eliminarVehiculo(${index})">Eliminar</button>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // creo las funciones para editar y eliminar vehículos
+        // la función editarVehiculo carga los datos del vehículo en el formulario
+
+        function editarVehiculo(index) {
+            const vehiculo = JSON.parse(localStorage.getItem("vehiculos"))[index];
+            document.getElementById("placa").value = vehiculo.placa;
+            document.getElementById("modelo").value = vehiculo.modelo;
+            document.getElementById("ano").value = vehiculo.ano;
+            document.getElementById("estado").value = vehiculo.estado;
+            document.getElementById("fecha").value = vehiculo.fecha;
+            document.getElementById("indexEdit").value = index;
+        }
+
+        // la función eliminarVehiculo elimina el vehículo del arreglo y actualiza la tabla
+        // luego actualiza el localStorage
+        function eliminarVehiculo(index) {
+            let vehiculos = JSON.parse(localStorage.getItem("vehiculos"));
+            vehiculos.splice(index, 1);
+            localStorage.setItem("vehiculos", JSON.stringify(vehiculos));
+            mostrarVehiculos();
+        }
+
+        // llamo a la función mostrarVehiculos al cargar la página
+        // para que se muestren los vehículos registrados
+        window.onload = mostrarVehiculos;
+    </script>
+</body>
+</html>

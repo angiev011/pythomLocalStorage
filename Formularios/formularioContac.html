@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Estilos/estilosFormVehi.css">
+    <title>Registro del Contacto</title>
+</head>
+<body>
+    <h1>CONTACTAME</h1>
+    <form id="formContacto">
+         
+        <!--campo vacio para almacenar de manera temporal el id a editar -->
+
+        <input type="hidden" id="indexEdit" value="">
+
+        <label>DEJANOS TU DATOS PARA CONTACTARTE</label><br><br>
+        
+        <label>Nombre:</label>
+        <input type="text" id="nombre" required><br><br>
+
+        <label>Numero Telefonico:</label>
+        <input type="number" id="telefono" required><br><br>
+
+        <label>Correo Electronico:</label>
+        <input type="text" id="correo" required><br><br>
+
+        <button type="submit">Registrar Contacto</button>
+    </form>
+
+    <h2>Registro De Contactos </h2>
+    <table id="tablaContactos">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Numero Telefonico</th>
+                <th>Correo electronico</th>
+                <th>Acciones</th>
+        
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        document.getElementById("formContacto").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const nombre = document.getElementById("nombre").value;
+            const telefono = document.getElementById("telefono").value;
+            const correo = document.getElementById("correo").value;
+            const indexEdit = document.getElementById("indexEdit").value;
+
+    
+
+            let contactos = JSON.parse(localStorage.getItem("contactos")) || [];
+
+            const nuevoContacto = { nombre, telefono, correo };
+
+
+            if (indexEdit === "") {
+                contactos.push(nuevoContacto);
+            } else {
+                contactos[indexEdit] = nuevoContacto;
+                document.getElementById("indexEdit").value = "";
+            }
+
+            localStorage.setItem("contactos", JSON.stringify(contactos));
+            mostrarContactos();
+            document.getElementById("formContacto").reset();
+        });
+
+        function mostrarContactos() {
+            const tbody = document.querySelector("#tablaContactos tbody");
+            tbody.innerHTML = "";
+            const contactos = JSON.parse(localStorage.getItem("contactos")) || [];
+
+            contactos.forEach((contacto, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${contacto.nombre}</td>
+                    <td>${contacto.telefono}</td>
+                    <td>${contacto.correo}</td>
+            
+                    <td>
+                        <button onclick="editarContacto(${index})">Editar</button>
+                        <button onclick="eliminarContacto(${index})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editarContacto(index) {
+            const contacto = JSON.parse(localStorage.getItem("contactos"))[index];
+            document.getElementById("nombre").value = contacto.nombre;
+            document.getElementById("telefono").value = contacto.telefono;
+            document.getElementById("correo").value = contacto.correo;
+            document.getElementById("indexEdit").value = index;
+
+        }
+
+        function eliminarContacto(index) {
+            let contactos = JSON.parse(localStorage.getItem("contactos"));
+            contactos.splice(index, 1);
+            localStorage.setItem("contactos", JSON.stringify(contactos));
+            mostrarContactos();
+        }
+
+        window.onload = mostrarContactos;
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+/* Reseteo básico de márgenes y fuente */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 20px;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* Título principal */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* Encabezado secundario */
+h2 {
+  margin-top: 40px;
+  color: #34495e;
+}
+
+/* Estilos del formulario */
+form {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Etiquetas y campos */
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+#estado , #prioridad{
+
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Botón principal */
+button[type="submit"] {
+  background-color: #2ecc71;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button[type="submit"]:hover {
+  background-color: #27ae60;
+}
+
+/* Tabla de vehículos */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #3498db;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #ecf0f1;
+}
+
+/* Botones de editar/eliminar */
+button {
+  margin: 2px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:nth-child(1) {
+  background-color: #f39c12; /* Editar */
+  color: white;
+}
+
+button:nth-child(2) {
+  background-color: #e74c3c; /* Eliminar */
+  color: white;
+}
+
+#descripcion {
+  height: 100px; /* Ajuste de altura para el campo de descripción */
+}

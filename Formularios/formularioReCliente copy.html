@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Estilos/estilosFormVehi.css">
+    <title>Registro del Propietario</title>
+</head>
+<body>
+    <h1>Registro del Propietario</h1>
+    <form id="formPropietario">
+         
+        <!--campo vacio para almacenar de manera temporal el id a editar -->
+
+        <input type="hidden" id="indexEdit" value="">
+
+        <label>INGRESE LOS DATOS DEL CLIENTE</label><br><br>
+        
+        <label>Nombre:</label>
+        <input type="text" id="nombre" required><br><br>
+
+        <label>Documento de Identidad:</label>
+        <input type="number" id="cedula" required><br><br>
+
+        <label>Numero Telefonico:</label>
+        <input type="number" id="telefono" required><br><br>
+
+        <label>Correo Electronico:</label>
+        <input type="text" id="correo" required><br><br>
+
+        <button type="submit">Registrar Cliente</button>
+    </form>
+
+    <h2>Propietatios registrados </h2>
+    <table id="tablaPropietarios">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Documento de Identidad</th>
+                <th>Numero Telefonico</th>
+                <th>Correo electronico</th>
+                <th>Acciones</th>
+        
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        document.getElementById("formPropietario").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const nombre = document.getElementById("nombre").value;
+            const cedula = document.getElementById("cedula").value;
+            const telefono = document.getElementById("telefono").value;
+            const correo = document.getElementById("correo").value;
+            const indexEdit = document.getElementById("indexEdit").value;
+
+    
+
+            let propietarios = JSON.parse(localStorage.getItem("propietarios")) || [];
+
+            const nuevoPropietario = { nombre, cedula, telefono, correo };
+
+
+            if (indexEdit === "") {
+                propietarios.push(nuevoPropietario);
+            } else {
+                propietarios[indexEdit] = nuevoPropietario;
+                document.getElementById("indexEdit").value = "";
+            }
+
+            localStorage.setItem("propietarios", JSON.stringify(propietarios));
+            mostrarPropietarios();
+            document.getElementById("formPropietario").reset();
+        });
+
+        function mostrarPropietarios() {
+            const tbody = document.querySelector("#tablaPropietarios tbody");
+            tbody.innerHTML = "";
+            const propietarios = JSON.parse(localStorage.getItem("propietarios")) || [];
+
+            propietarios.forEach((propietario, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${propietario.nombre}</td>
+                    <td>${propietario.cedula}</td>
+                    <td>${propietario.telefono}</td>
+                    <td>${propietario.correo}</td>
+            
+                    <td>
+                        <button onclick="editarPropietario(${index})">Editar</button>
+                        <button onclick="eliminarPropietario(${index})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editarPropietario(index) {
+            const propietario = JSON.parse(localStorage.getItem("propietarios"))[index];
+            document.getElementById("nombre").value = propietario.nombre;
+            document.getElementById("cedula").value = propietario.cedula;
+            document.getElementById("telefono").value = propietario.telefono;
+            document.getElementById("correo").value = propietario.correo;
+            document.getElementById("indexEdit").value = index;
+
+        }
+
+        function eliminarPropietario(index) {
+            let propietarios = JSON.parse(localStorage.getItem("propietarios"));
+            propietarios.splice(index, 1);
+            localStorage.setItem("propietarios", JSON.stringify(propietarios));
+            mostrarPropietarios();
+        }
+
+        window.onload = mostrarPropietarios;
+    </script>
+</body>
+</html>
